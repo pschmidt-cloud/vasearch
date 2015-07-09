@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Hello jQuery</title>
+    <!-- <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.10.2/jquery.min.js"></script> -->
+    <script src="../bower_components/jquery/dist/jquery.min.js"></script>
+    <script src="../bower_components/rxjs/dist/rx.lite.min.js"></script>
+    <script>
+        $(function () {
+            $("#searchBtn").click(function () {
+                searchAll();
+            });
+            //summary_data();
+        });
+
+        var searchAll = function() {
+            $.ajax({
+                url: "https://api.github.com/users"
+            }).then(function (data) {
+                $('.greeting-id').append(data[0].login);
+                //$('.greeting-content').append(data.content);
+            });
+        }
+
+        var doConsole = function (console) {
+            var names = ["Ben", "Jafar", "Matt", "Priya", "Brian"],
+                    counter;
+
+            for (counter = 0; counter < names.length; counter++) {
+                console.log(names[counter]);
+            }
+        }
+    </script>
+</head>
+
+<body>
+<div>
+    <button id="searchBtn">Search</button>
+    <p class="greeting-id">The ID is </p>
+    <p class="greeting-content">The content is </p>
+</div>
+</body>
+</html>

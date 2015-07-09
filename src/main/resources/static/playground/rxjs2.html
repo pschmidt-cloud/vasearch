@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Hello jQuery</title>
+    <!-- <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.10.2/jquery.min.js"></script> -->
+    <!-- Examples from https://gist.github.com/staltz/868e7e9bc2a7b8c1f754 -->
+    <script src="../bower_components/jquery/dist/jquery.min.js"></script>
+    <script src="../bower_components/rxjs/dist/rx.lite.min.js"></script>
+    <script>
+        $(function () {
+            var startupRequestStream = Rx.Observable.just('https://api.github.com/users');
+            var refreshButton = $('#refreshButton');
+            var refreshClickStream = Rx.Observable.fromEvent(refreshButton, 'click');
+            var requestOnRefreshStream = refreshClickStream
+                    .map(function () {
+                        var randomOffset = Math.floor(Math.random() * 500);
+                        //return Rx.Observable.fromPromise(jQuery.getJSON('https://api.github.com/users?since=' + randomOffset));
+                        return 'https://api.github.com/users?since=' + randomOffset;
+                    });
+
+            var requestStream = Rx.Observable.merge(
+                    requestOnRefreshStream, startupRequestStream
+            );
+
+            var responseStream = requestStream
+                    .flatMap(function (requestUrl) {
+                        return Rx.Observable.fromPromise(jQuery.getJSON(requestUrl));
+                    });
+
+            responseStream.subscribe(function (response) {
+                var tookDiv = $('#results');
+                tookDiv.html("");
+                tookDiv.append(response[0].login);
+            });
+
+            /*
+            requestOnRefreshStream.subscribe(function (response) {
+                var tookDiv = $('#results');
+                tookDiv.html("");
+                tookDiv.append(response[0].login);
+            });
+            */
+        });
+    </script>
+</head>
+
+<body>
+<div>
+    <br /><br />
+    Live Search: <input id="input" />
+    <p id="results"></p>
+    <br />
+    <button id="refreshButton">Refresh</button>
+</div>
+</body>
+</html>
